@@ -34,6 +34,9 @@ const Signup = ({ navigation }) => {
     const [pass, setPass] = useState('');
 
 
+
+
+
     const validateUser = async (name, email, password) => {
         try {
             let data = {
@@ -46,7 +49,7 @@ const Signup = ({ navigation }) => {
                 }),
             };
             const re = await fetch(
-                'http://192.168.29.81:4000/api/v1/register',
+                'http://192.168.0.103:4000/api/v1/register',
                 data
             );
             if (re.status != 201) {
@@ -57,7 +60,7 @@ const Signup = ({ navigation }) => {
                 setIsInvalid(false);
                 setMsgText('');
 
-                // const user2 = await re.json();
+                const user = await re.json();
                 // Do something with user
                 // use it for profile or save it in localstorage
                 AsyncStorage.setItem('user', JSON.stringify(user));
