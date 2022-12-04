@@ -16,6 +16,11 @@ const Home = ({ navigation }) => {
   const [products, setProducts] = useState([]);
   const [accessory, setAccessory] = useState([]);
 
+  const LogOut = async () => {
+    let usr = await AsyncStorage.setItem('user', undefined);
+  }
+
+
   //get called on screen loads
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -31,9 +36,9 @@ const Home = ({ navigation }) => {
     let productList = [];
     let accessoryList = [];
     for (let index = 0; index < Items.length; index++) {
-      if (Items[index].category == 'product') {
+      if (Items[index].category == 'table') {
         productList.push(Items[index]);
-      } else if (Items[index].category == 'accessory') {
+      } else if (Items[index].category == 'sofa') {
         accessoryList.push(Items[index]);
       }
     }
@@ -174,9 +179,14 @@ const Home = ({ navigation }) => {
             justifyContent: 'space-between',
             padding: 16,
           }}>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              LogOut()
+              navigation.navigate('Login')
+            }}
+          >
             <Entypo
-              name="shopping-bag"
+              name="log-out"
               style={{
                 fontSize: 18,
                 color: COLOURS.backgroundMedium,
@@ -213,7 +223,7 @@ const Home = ({ navigation }) => {
               letterSpacing: 1,
               marginBottom: 10,
             }}>
-            Hi-Fi Shop &amp; Service
+            Furniture Shop &amp; Service
           </Text>
           <Text
             style={{
@@ -223,7 +233,7 @@ const Home = ({ navigation }) => {
               letterSpacing: 1,
               lineHeight: 24,
             }}>
-            Audio shop on Rustaveli Ave 57.
+            Furniture shop online.
             {'\n'}This shop offers both products and services
           </Text>
         </View>
