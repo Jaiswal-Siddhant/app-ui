@@ -30,7 +30,7 @@ export const Items = [
       require('../../assets/table/table.png'),
       require('../../assets/table/table.png'),
     ],
-    modelSrc: `C:/Users/shail/Desktop/starter-kit/assets/Table 2/Table-2.obj`
+    modelSrc: 'Table'
   },
   {
     id: 2,
@@ -40,15 +40,15 @@ export const Items = [
     description:
       'boAt Rockerz 450 M is an on-ear wireless headset that has been ergonomically designed to meet the needs of music lovers.',
     isOff: false,
-    productImage: require('../../assets/table/table.png'),
+    productImage: require('../../assets/desk/R_Jeremiah_Collection_Mid_Century_Desk-removebg-preview.png'),
     isAvailable: true,
     productImageList: [
 
-      require('../../assets/table/table.png'),
-      require('../../assets/table/table.png'),
-      require('../../assets/table/table.png'),
+      require('../../assets/desk/R_Jeremiah_Collection_Mid_Century_Desk-removebg-preview.png'),
+      require('../../assets/desk/R_Jeremiah_Collection_Mid_Century_Desk-removebg-preview.png'),
+      require('../../assets/desk/R_Jeremiah_Collection_Mid_Century_Desk-removebg-preview.png'),
     ],
-    modelSrc: `C:/Users/shail/Desktop/starter-kit/assets/table/table.obj`
+    modelSrc: `Bottle`
   },
   {
     id: 3,
@@ -66,7 +66,7 @@ export const Items = [
       require('../../assets/table/table.png'),
       require('../../assets/table/table.png'),
     ],
-    modelSrc: `C:/Users/shail/Desktop/starter-kit/assets/table/table.obj`
+    modelSrc: `Stand`
   },
   {
     id: 4,

@@ -16,7 +16,7 @@ const path = require('path');
 
 const InitialScene = (params) => {
   const [rotation, setRotation] = useState([0, 0, 0]);
-  const [position, setPosition] = useState([0, 0, -0.5]);
+  const [position, setPosition] = useState([0, 0, -5]);
 
   // console.log(params.arSceneNavigator.viroAppProps.link);
 
@@ -28,7 +28,7 @@ const InitialScene = (params) => {
 
 
 
-  // console.log(isARSupportedOnDevice);
+  console.log(params.arSceneNavigator.viroAppProps.link);
 
   const rotateObj = (rotateState, rotationFactor, src) => {
     if (rotateState === 2) {
@@ -54,7 +54,7 @@ const InitialScene = (params) => {
     <ViroARScene
     >
       <ViroAmbientLight color="#ffff" />
-      <ViroARPlane minHeight={1} minWidth={1} alignment={'Horizontal'} onAnchorFound={(arr) => {
+      {/* <ViroARPlane minHeight={0.1} minWidth={0.1} alignment={'Horizontal'} onAnchorFound={(arr) => {
         console.log(arr.position)
         let pos = arr.position;
         setPosition([pos[0], pos[1], pos[2]])
@@ -63,18 +63,18 @@ const InitialScene = (params) => {
           let pos = arr.position;
           setPosition([pos[0], pos[1], pos[2]])
         }}
-        onAnchorRemoved={() => { }}>
-        <Viro3DObject
-          source={{ uri: params.arSceneNavigator.viroAppProps.link }}
-          position={position}
-          scale={[0.0005, 0.0005, 0.0005]}
-          rotation={rotation}
-          type="GLB"
-          onRotate={rotateObj}
-        // animation={{ name: 'rotate', loop: true, run: true }}
-        />
+        onAnchorRemoved={() => { }}> */}
+      <Viro3DObject
+        source={{ uri: 'http://192.168.18.30:3000/' + params.arSceneNavigator.viroAppProps.link }}
+        position={position}
+        scale={[0.005, 0.005, 0.005]}
+        rotation={rotation}
+        type="GLB"
+        onRotate={rotateObj}
+      // animation={{ name: 'rotate', loop: true, run: true }}
+      />
 
-      </ViroARPlane>
+      {/* </ViroARPlane> */}
     </ViroARScene >
 
   );
