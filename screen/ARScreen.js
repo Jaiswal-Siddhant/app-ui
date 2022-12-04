@@ -14,9 +14,11 @@ import {
 } from '@viro-community/react-viro';
 const path = require('path');
 
-const InitialScene = () => {
+const InitialScene = (params) => {
   const [rotation, setRotation] = useState([0, 0, 0]);
   const [position, setPosition] = useState([0, 0, -0.5]);
+
+  // console.log(params.arSceneNavigator.viroAppProps.link);
 
   // const mat = ViroMaterials.createMaterials({
   //   skin: {
@@ -63,7 +65,7 @@ const InitialScene = () => {
         }}
         onAnchorRemoved={() => { }}>
         <Viro3DObject
-          source={require('../assets/Stand/stand.glb')}
+          source={{ uri: params.arSceneNavigator.viroAppProps.link }}
           position={position}
           scale={[0.0005, 0.0005, 0.0005]}
           rotation={rotation}
@@ -78,8 +80,9 @@ const InitialScene = () => {
   );
 };
 
-export default () => {
-
+export default ({ route }) => {
+  // console.log(route.params.link);
+  const link = route.params.link
 
   // Do required things for opening playstore
 
@@ -88,9 +91,9 @@ export default () => {
       <Text>AR Screen</Text>
       <ViroARSceneNavigator
         initialScene={{ scene: InitialScene }}
+        viroAppProps={{ link: link }}
         style={{ flex: 1 }}
       />
-
     </View>
   );
 };
