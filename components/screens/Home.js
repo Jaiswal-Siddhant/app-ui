@@ -7,17 +7,23 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import { COLOURS, Items } from '../database/Database';
+import { COLOURS, Items, serverUrl } from '../database/Database';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Home = ({ navigation }) => {
-  const [products, setProducts] = useState([]);
-  const [accessory, setAccessory] = useState([]);
+  const [productCount, setProductCount] = useState(0);
+  const [fetchedProducts, setFetchedProducts] = useState([]);
 
   const LogOut = async () => {
-    let usr = await AsyncStorage.setItem('user', undefined);
+    try {
+
+      await AsyncStorage.setItem('user', '');
+    } catch (error) {
+      console.log(error);
+    }
   }
 
 
@@ -32,27 +38,29 @@ const Home = ({ navigation }) => {
 
   //get data from DB
 
-  const getDataFromDB = () => {
-    let productList = [];
-    let accessoryList = [];
-    for (let index = 0; index < Items.length; index++) {
-      if (Items[index].category == 'table') {
-        productList.push(Items[index]);
-      } else if (Items[index].category == 'sofa') {
-        accessoryList.push(Items[index]);
-      }
+  const getDataFromDB = async () => {
+    try {
+      const dataFromDB = await fetch(serverUrl + 'products?page=1');
+      // const dataFromDB1 = await JSON.parse(dataFromDB._bodyBlob._data.__collector);
+      const data = await dataFromDB.json();
+      setFetchedProducts(data.products)
+      setProductCount(data.productsCount)
+
+    } catch (error) {
+      console.log(error);
     }
 
-    setProducts(productList);
-    setAccessory(accessoryList);
+
   };
 
   //create an product reusable card
-
   const ProductCard = ({ data }) => {
     return (
       <TouchableOpacity
-        onPress={() => navigation.navigate('ProductInfo', { productID: data.id })}
+        onPress={() => {
+          // console.log(data._id)
+          navigation.navigate('ProductInfo', { productID: data._id })
+        }}
         style={{
           width: '48%',
           marginVertical: 14,
@@ -89,12 +97,13 @@ const Home = ({ navigation }) => {
                   fontWeight: 'bold',
                   letterSpacing: 1,
                 }}>
-                {data.offPercentage}%
+                {data?.offPercentage || 0}%
               </Text>
             </View>
           ) : null}
+          {/* 'https://i.ibb.co/DRST11n/1.webp' */}
           <Image
-            source={data.productImage}
+            source={{ uri: data.images[0].url }}
             style={{
               width: '80%',
               height: '80%',
@@ -109,56 +118,55 @@ const Home = ({ navigation }) => {
             fontWeight: '600',
             marginBottom: 2,
           }}>
-          {data.productName}
+          {data.name}
         </Text>
-        {data.category == 'accessory' ? (
-          data.isAvailable ? (
-            <View
+        {data.stock > 0 ? (
+          null
+          // <View
+          //   style={{
+          //     flexDirection: 'row',
+          //     alignItems: 'center',
+          //   }}>
+          //   <FontAwesome
+          //     name="circle"
+          //     style={{
+          //       fontSize: 12,
+          //       marginRight: 6,
+          //       color: COLOURS.green,
+          //     }}
+          //   />
+          //   <Text
+          //     style={{
+          //       fontSize: 12,
+          //       color: COLOURS.green,
+          //     }}>
+          //     Available
+          //   </Text>
+          // </View>
+        ) : (
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <FontAwesome
+              name="circle"
               style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}>
-              <FontAwesome
-                name="circle"
-                style={{
-                  fontSize: 12,
-                  marginRight: 6,
-                  color: COLOURS.green,
-                }}
-              />
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: COLOURS.green,
-                }}>
-                Available
-              </Text>
-            </View>
-          ) : (
-            <View
+                fontSize: 12,
+                marginRight: 6,
+                color: COLOURS.red,
+              }}
+            />
+            <Text
               style={{
-                flexDirection: 'row',
-                alignItems: 'center',
+                fontSize: 12,
+                color: COLOURS.red,
               }}>
-              <FontAwesome
-                name="circle"
-                style={{
-                  fontSize: 12,
-                  marginRight: 6,
-                  color: COLOURS.red,
-                }}
-              />
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: COLOURS.red,
-                }}>
-                Unavailable
-              </Text>
-            </View>
-          )
-        ) : null}
-        <Text>&#8377; {data.productPrice}</Text>
+              Unavailable
+            </Text>
+          </View>
+        )}
+        <Text>&#8377; {data.price}</Text>
       </TouchableOpacity>
     );
   };
@@ -171,7 +179,7 @@ const Home = ({ navigation }) => {
         backgroundColor: COLOURS.white,
       }}>
       <StatusBar backgroundColor={COLOURS.white} barStyle="dark-content" />
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={true}>
         <View
           style={{
             width: '100%',
@@ -269,7 +277,7 @@ const Home = ({ navigation }) => {
                   opacity: 0.5,
                   marginLeft: 10,
                 }}>
-                41
+                {productCount}
               </Text>
             </View>
             <Text
@@ -287,13 +295,14 @@ const Home = ({ navigation }) => {
               flexWrap: 'wrap',
               justifyContent: 'space-around',
             }}>
-            {products.map(data => {
-              return <ProductCard data={data} key={data.id} />;
+            {fetchedProducts.map((data, i) => {
+              // console.log(data);
+              return <ProductCard data={data} key={i} />;
             })}
           </View>
         </View>
 
-        <View
+        {/* <View
           style={{
             padding: 16,
           }}>
@@ -343,11 +352,11 @@ const Home = ({ navigation }) => {
               flexWrap: 'wrap',
               justifyContent: 'space-around',
             }}>
-            {accessory.map(data => {
-              return <ProductCard data={data} key={data.id} />;
+            {fetchedProducts.map((data, i) => {
+              return <ProductCard data={data} key={i} />;
             })}
           </View>
-        </View>
+        </View> */}
       </ScrollView>
     </View>
   );

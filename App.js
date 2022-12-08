@@ -12,8 +12,36 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const Stack = createNativeStackNavigator();
 
 const isLoggedIn = async () => {
-  let usr = await AsyncStorage.getItem('user');
-  return usr.success ? true : false;
+  try {
+    let usr = await AsyncStorage.getItem('user');
+    console.log(usr);
+    return;
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const HomeStack = (options) => {
+  return (<Stack.Navigator screenOptions={options}>
+    <Stack.Screen name="Home" component={Home} />
+    <Stack.Screen name="MyCart" component={MyCart} />
+    <Stack.Screen name="ProductInfo" component={ProductInfo} />
+    <Stack.Screen name="ARScreen" component={ARScreen} />
+    <Stack.Screen name="Login" component={Login} />
+    <Stack.Screen name="Signup" component={Signup} />
+  </Stack.Navigator>)
+
+}
+
+const LoginStack = (options) => {
+  return (<Stack.Navigator screenOptions={options}>
+    <Stack.Screen name="Login" component={Login} />
+    <Stack.Screen name="Signup" component={Signup} />
+    <Stack.Screen name="Home" component={Home} />
+    <Stack.Screen name="MyCart" component={MyCart} />
+    <Stack.Screen name="ProductInfo" component={ProductInfo} />
+    <Stack.Screen name="ARScreen" component={ARScreen} />
+  </Stack.Navigator>)
 }
 
 const App = () => {
@@ -22,23 +50,26 @@ const App = () => {
   };
 
   return (
+
+    // isLoggedIn() !== null ? (
+    //   <NavigationContainer>
+    //     <Stack.Navigator screenOptions={options}>
+    //       <Stack.Screen name="Home" component={Home} />
+    //       <Stack.Screen name="MyCart" component={MyCart} />
+    //       <Stack.Screen name="ProductInfo" component={ProductInfo} />
+    //       <Stack.Screen name="ARScreen" component={ARScreen} />
+    //       <Stack.Screen name="Login" component={Login} />
+    //       <Stack.Screen name="Signup" component={Signup} />
+    //     </Stack.Navigator>
+    //   </NavigationContainer>)
+    //   :
+    //   (
     <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={options}>
-
-        {!isLoggedIn() ? <>
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Signup" component={Signup} /></> : null
-        }
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="MyCart" component={MyCart} />
-        <Stack.Screen name="ProductInfo" component={ProductInfo} />
-        <Stack.Screen name="ARScreen" component={ARScreen} />
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Signup" component={Signup} />
-
-      </Stack.Navigator>
+      {!isLoggedIn() ? LoginStack(options) : HomeStack(options)}
     </NavigationContainer>
+    // )
+
+
   );
 };
 

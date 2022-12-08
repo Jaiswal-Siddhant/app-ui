@@ -10,7 +10,8 @@ import {
 } from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import React, { useEffect, useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage, { useAsyncStorage } from '@react-native-async-storage/async-storage';
+import { serverUrl } from '../../components/database/Database'
 
 const COLOURS = {
     white: '#ffffff',
@@ -24,7 +25,20 @@ const COLOURS = {
     yellow: '#FFD700'
 };
 
+const isLoggedIn = async () => {
+    try {
+        const user = await useAsyncStorage.getItem('user');
+        if (user != null) return true;
+
+    } catch (error) {
+        console.log(error);
+    }
+    return false;
+}
+
 const Login = ({ navigation }) => {
+
+
     const [email, setEmail] = useState('');
     const [pass, setPass] = useState('');
     const [isInvalid, setIsInvalid] = useState(false);
@@ -40,7 +54,7 @@ const Login = ({ navigation }) => {
                 }),
             };
             const re = await fetch(
-                'http://192.168.0.103:4000/api/v1/login',
+                serverUrl + 'login',
                 data
             );
             if (re.status != 200) {
@@ -50,7 +64,8 @@ const Login = ({ navigation }) => {
                 const user = await re.json();
                 // 		// Do something with user
                 // 		// use it for profile or save it in localstorage
-                AsyncStorage.setItem('user', JSON.stringify(user));
+
+                await AsyncStorage.setItem('user', JSON.stringify(user));
                 console.log(await AsyncStorage.getItem('user'));
                 navigation.navigate('Home');
             }

@@ -17,6 +17,7 @@ const path = require('path');
 const InitialScene = (params) => {
   const [rotation, setRotation] = useState([0, 0, 0]);
   const [position, setPosition] = useState([0, 0, -5]);
+  const [scale, setScale] = useState([0.5, 0.5, 0.5]);
 
   // console.log(params.arSceneNavigator.viroAppProps.link);
 
@@ -65,12 +66,17 @@ const InitialScene = (params) => {
         }}
         onAnchorRemoved={() => { }}> */}
       <Viro3DObject
-        source={{ uri: 'http://192.168.18.30:3000/' + params.arSceneNavigator.viroAppProps.link }}
+        source={{ uri: 'http://192.168.29.81:4000/api/v1/model/' + params.arSceneNavigator.viroAppProps.link }}
         position={position}
-        scale={[0.005, 0.005, 0.005]}
+        scale={scale}
         rotation={rotation}
         type="GLB"
         onRotate={rotateObj}
+        onPinch={(pinchState, scaleFactor, source) => {
+          if (pinchState === 3) {
+            setScale([scale[0] * -scaleFactor * .5, scale[1] * -scaleFactor * .5, scale[2] * -scaleFactor * .5])
+          }
+        }}
       // animation={{ name: 'rotate', loop: true, run: true }}
       />
 
