@@ -22,14 +22,15 @@ export const Items = [
       'Up to 20 hours battery life | Super powerful Bass | 40mm dynamic driver | Pressure less ear muffs | Bluetooth 5.0 | Voice control',
     isOff: true,
     offPercentage: 10,
-    productImage: require('../../assets/Headphones1.png'),
+    productImage: require('../../assets/table/table.png'),
     isAvailable: true,
     productImageList: [
 
-      require('../../assets/Headphones1.png'),
-      require('../../assets/Headphones2.png'),
+      require('../../assets/table/table.png'),
+      require('../../assets/table/table.png'),
+      require('../../assets/table/table.png'),
     ],
-    modelSrc: 'Headphones'
+    modelSrc: `C:/Users/shail/Desktop/starter-kit/assets/Table 2/Table-2.obj`
   },
   {
     id: 2,
@@ -39,15 +40,15 @@ export const Items = [
     description:
       'boAt Rockerz 450 M is an on-ear wireless headset that has been ergonomically designed to meet the needs of music lovers.',
     isOff: false,
-    productImage: require('../../assets/Phone1.png'),
+    productImage: require('../../assets/table/table.png'),
     isAvailable: true,
     productImageList: [
 
-      require('../../assets/Phone1.png'),
-      require('../../assets/Phone2.png'),
-      require('../../assets/Phone3.png'),
+      require('../../assets/table/table.png'),
+      require('../../assets/table/table.png'),
+      require('../../assets/table/table.png'),
     ],
-    modelSrc: `Phone`
+    modelSrc: `C:/Users/shail/Desktop/starter-kit/assets/table/table.obj`
   },
   {
     id: 3,
@@ -58,14 +59,14 @@ export const Items = [
       'Bluetooth: It has Bluetooth v5.0 with a range of 10m and is compatible with Android & iOS',
     isOff: true,
     offPercentage: 18,
-    productImage: require('../../assets/Zoney1.png'),
+    productImage: require('../../assets/table/table.png'),
     isAvailable: true,
     productImageList: [
-      require('../../assets/Zoney1.png'),
-      require('../../assets/Zoney2.png'),
-      require('../../assets/Zoney3.png'),
+      require('../../assets/table/table.png'),
+      require('../../assets/table/table.png'),
+      require('../../assets/table/table.png'),
     ],
-    modelSrc: `Zoney`
+    modelSrc: `C:/Users/shail/Desktop/starter-kit/assets/table/table.obj`
   },
   {
     id: 4,
@@ -75,13 +76,14 @@ export const Items = [
     description:
       'Fly into your workouts with precise tones that inspire and energize your system with its HD sound, all the time.',
     isOff: false,
-    productImage: require('../../assets/TV1.png'),
+    productImage: require('../../assets/sofa/sofa1.png'),
     isAvailable: true,
     productImageList: [
-      require('../../assets/TV1.png'),
-      require('../../assets/TV2.png')
+      require('../../assets/sofa/sofa2.png'),
+      require('../../assets/sofa/sofa2.png'),
+      require('../../assets/sofa/sofa2.png')
     ],
-    modelSrc: `TV`
+    modelSrc: `C:/Users/shail/Desktop/starter-kit/assets/table/table.obj`
   },
   {
     id: 5,
@@ -91,13 +93,14 @@ export const Items = [
     description:
       'The unbeatable boAt signature sound shines through no matter what are you playing courtesy its 10mm drivers.',
     isOff: false,
-    productImage: require('../../assets/Chair1.png'),
+    productImage: require('../../assets/sofa/sofa2.png'),
     isAvailable: false,
     productImageList: [
-      require('../../assets/Chair1.png'),
-      require('../../assets/Chair2.png'),
+      require('../../assets/sofa/sofa2.png'),
+      require('../../assets/sofa/sofa2.png'),
+      require('../../assets/sofa/sofa2.png')
     ],
-    modelSrc: `Chair`
+    modelSrc: `C:/Users/shail/Desktop/starter-kit/assets/table/table.obj`
   },
   {
     id: 6,
@@ -107,13 +110,14 @@ export const Items = [
     description:
       'One Touch Control & Voice Assistant: With one multifunction button, you can play/pause, previous/next track and answer/hang-up calls.Voice assistant function lets you access siri/Google Assistant',
     isOff: false,
-    productImage: require('../../assets/SonyHeadphones1.png'),
+    productImage: require('../../assets/sofa/sofa2.png'),
     isAvailable: true,
     productImageList: [
-      require('../../assets/SonyHeadphones1.png'),
-      require('../../assets/SonyHeadphones2.png'),
+      require('../../assets/sofa/sofa2.png'),
+      require('../../assets/sofa/sofa2.png'),
+      require('../../assets/sofa/sofa2.png')
     ],
-    modelSrc: `SonyHeadphones`
+    modelSrc: `C:/Users/shail/Desktop/starter-kit/assets/table/table.obj`
   },
   {
     id: 7,
@@ -123,13 +127,15 @@ export const Items = [
     description:
       'One Touch Control & Voice Assistant: With one multifunction button, you can play/pause, previous/next track and answer/hang-up calls.Voice assistant function lets you access siri/Google Assistant',
     isOff: false,
-    productImage: require('../../assets/SonyHeadphones1.png'),
+    productImage: require('../../assets/sofa/sofa2.png'),
     isAvailable: true,
     productImageList: [
-      require('../../assets/SonyHeadphones1.png'),
-      require('../../assets/SonyHeadphones2.png'),
+      require('../../assets/sofa/sofa2.png'),
+      require('../../assets/sofa/sofa1.png'),
+      require('../../assets/sofa/sofa2.png'),
+
     ],
-    modelSrc: `SonyHeadphones`
+    modelSrc: `C:/Users/shail/Desktop/starter-kit/assets/table/table.obj`
   },
   {
     id: 8,
@@ -139,15 +145,17 @@ export const Items = [
     description:
       'boAt Rockerz 450 M is an on-ear wireless headset that has been ergonomically designed to meet the needs of music lovers.',
     isOff: false,
-    productImage: require('../database/images/products/boat1.png'),
+    productImage: require('../../assets/table/table.png'),
     isAvailable: true,
     productImageList: [
       require('../database/images/products/boat1.png'),
       require('../database/images/products/boat2.png'),
       require('../database/images/products/boat3.png'),
     ],
-    modelSrc: `SonyHeadphones`
+    modelSrc: `C:/Users/shail/Desktop/starter-kit/assets/table/table.obj`
   },
 ];
 
-exports.serverUrl = 'http://192.168.238.116:4000/api/v1/';
+
+
+exports.serverUrl = 'http://192.168.0.101:4000/api/v1/';

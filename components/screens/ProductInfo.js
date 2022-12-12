@@ -385,7 +385,7 @@ const ProductInfo = ({ route, navigation }) => {
 					alignItems: 'center',
 				}}>
 				<TouchableOpacity
-					onPress={() => (fetchedProducts.stock > 0 ? addToCart(fetchedProducts._id) : null)}
+					onPress={() => (fetchedProducts.stock > 0 ? addToCart(fetchedProducts) : null)}
 					style={{
 						width: '86%',
 						height: '90%',
