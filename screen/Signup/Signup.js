@@ -49,7 +49,7 @@ const Signup = ({ navigation }) => {
                 }),
             };
             const re = await fetch(
-                'http://192.168.0.103:4000/api/v1/register',
+                'http://192.168.0.101:4000/api/v1/register',
                 data
             );
             if (re.status != 201) {

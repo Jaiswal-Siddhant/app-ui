@@ -8,47 +8,37 @@ import {
 	ToastAndroid,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { COLOURS, Items } from '../database/Database';
+import { COLOURS, serverUrl } from '../database/Database';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const MyCart = ({ navigation }) => {
-	const [product, setProduct] = useState();
 	const [total, setTotal] = useState(null);
+	const [prod, setProd] = useState([]);
+	const productData = [];
 
-	useEffect(() => {
-		const unsubscribe = navigation.addListener('focus', () => {
-			getDataFromDB();
-		});
-
-		return unsubscribe;
-	}, [navigation]);
-
-	//get data from local DB by ID
 	const getDataFromDB = async () => {
-		let items = await AsyncStorage.getItem('cartItems');
-		items = JSON.parse(items);
-		let productData = [];
-		if (items) {
-			Items.forEach(data => {
-				if (items.includes(data.id)) {
-					productData.push(data);
-					return;
-				}
-			});
-			setProduct(productData);
-			getTotal(productData);
+		let itemArray = await AsyncStorage.getItem('cartItems');
+		itemArray = await JSON.parse(itemArray);
+		console.log('itemArr', itemArray);
+		if (itemArray) {
+			setProd(itemArray);
+			setTotal(prod)
 		} else {
-			setProduct(false);
-			getTotal(false);
+			setProd(false)
+			setTotal(false)
 		}
 	};
-
 	//get total price of all items in the cart
-	const getTotal = productData => {
+
+	useEffect(() => {
+		getDataFromDB();
+
+	}, []);
+
+	const getTotal = finalProd => {
 		let total = 0;
-		for (let index = 0; index < productData.length; index++) {
-			let productPrice = productData[index].productPrice;
-			total = total + productPrice;
+		for (let index = 0; index < finalProd.length; index++) {
+			total = total + finalProd[index].price;
 		}
 		setTotal(total);
 	};
@@ -57,18 +47,11 @@ const MyCart = ({ navigation }) => {
 
 	const removeItemFromCart = async id => {
 		let itemArray = await AsyncStorage.getItem('cartItems');
-		itemArray = JSON.parse(itemArray);
-		if (itemArray) {
-			let array = itemArray;
-			for (let index = 0; index < array.length; index++) {
-				if (array[index] == id) {
-					array.splice(index, 1);
-				}
+		// await AsyncStorage.removeItem('cartItems');
+		// console.log('removed prod successfully');
+		itemArray = await JSON.parse(itemArray);
+		console.log('itemArrayasdasdasdasdas', itemArray);
 
-				await AsyncStorage.setItem('cartItems', JSON.stringify(array));
-				getDataFromDB();
-			}
-		}
 	};
 
 	//checkout
@@ -86,10 +69,11 @@ const MyCart = ({ navigation }) => {
 	};
 
 	const renderProducts = (data, index) => {
+		// console.log(data.images[0].url)
 		return (
 			<TouchableOpacity
-				key={data.key}
-				onPress={() => navigation.navigate('ProductInfo', { productID: data.id })}
+				key={data._id}
+				onPress={() => navigation.navigate('ProductInfo', { productID: data._id })}
 				style={{
 					width: '100%',
 					height: 100,
@@ -97,6 +81,7 @@ const MyCart = ({ navigation }) => {
 					flexDirection: 'row',
 					alignItems: 'center',
 				}}>
+
 				<View
 					style={{
 						width: '30%',
@@ -109,7 +94,7 @@ const MyCart = ({ navigation }) => {
 						marginRight: 22,
 					}}>
 					<Image
-						source={data.productImage}
+						source={{ uri: data.images[0].url }}
 						style={{
 							width: '100%',
 							height: '100%',
@@ -132,7 +117,7 @@ const MyCart = ({ navigation }) => {
 								fontWeight: '600',
 								letterSpacing: 1,
 							}}>
-							{data.productName}
+							{data.name}
 						</Text>
 						<View
 							style={{
@@ -148,11 +133,11 @@ const MyCart = ({ navigation }) => {
 									maxWidth: '85%',
 									marginRight: 4,
 								}}>
-								&#8377;{data.productPrice}
+								&#8377;{data.price}
 							</Text>
 							<Text>
 								(~&#8377;
-								{data.productPrice + data.productPrice / 20})
+								{data.price + data.price / 20})
 							</Text>
 						</View>
 					</View>
@@ -203,7 +188,7 @@ const MyCart = ({ navigation }) => {
 								/>
 							</View>
 						</View>
-						<TouchableOpacity onPress={() => removeItemFromCart(data.id)}>
+						<TouchableOpacity onPress={() => removeItemFromCart(data._id)}>
 							<MaterialCommunityIcons
 								name="delete-outline"
 								style={{
@@ -274,7 +259,7 @@ const MyCart = ({ navigation }) => {
 					My Cart
 				</Text>
 				<View style={{ paddingHorizontal: 16 }}>
-					{product ? product.map((v, i) => renderProducts(v, i)) : null}
+					{prod ? prod.map((v, i) => renderProducts(v, i)) : null}
 				</View>
 				<View>
 					<View
@@ -532,7 +517,7 @@ const MyCart = ({ navigation }) => {
 					alignItems: 'center',
 				}}>
 				<TouchableOpacity
-					onPress={() => (total != 0 ? checkOut() : null)}
+					onPress={() => checkOut()}
 					style={{
 						width: '86%',
 						height: '90%',
