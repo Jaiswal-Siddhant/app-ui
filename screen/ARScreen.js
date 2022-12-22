@@ -13,6 +13,8 @@ import {
   ViroAnimations,
 } from '@viro-community/react-viro';
 const path = require('path');
+import { serverUrl } from '../components/database/Database';
+
 
 const InitialScene = (params) => {
   const [rotation, setRotation] = useState([0, 0, 0]);
@@ -66,7 +68,7 @@ const InitialScene = (params) => {
         }}
         onAnchorRemoved={() => { }}> */}
       <Viro3DObject
-        source={{ uri: 'http://192.168.29.81:4000/api/v1/model/' + params.arSceneNavigator.viroAppProps.link }}
+        source={{ uri: serverUrl + 'model/' + params.arSceneNavigator.viroAppProps.link }}
         position={position}
         scale={scale}
         rotation={rotation}
@@ -123,64 +125,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-
-// const HelloWorldSceneAR = () => {
-//   const [text, setText] = useState('Initializing AR...');
-
-//   function onInitialized(state, reason) {
-
-//     console.log('guncelleme', state, reason);
-//     if (state === ViroConstants.TRACKING_NORMAL) {
-//       setText('Hello World!');
-//     } else if (state === ViroConstants.TRACKING_NONE) {
-//       // Handle loss of tracking
-//       setText('NULL');
-//     }
-//   }
-
-//   return (
-//     <ViroARScene onTrackingUpdated={onInitialized}>
-//       <ViroText
-//         text={text}
-//         scale={[0.5, 0.5, 0.5]}
-//         position={[0, 0, -1]}
-//         style={styles.helloWorldTextStyle}
-//       />
-//     </ViroARScene>
-//   );
-// };
-
-// export default () => {
-//   const _onLoadStart = event => {
-//     console.log('loading has started', event.nativeEvent.target);
-//   };
-
-//   const _onLoadEnd = event => {
-//     console.log('loading has finished', event.nativeEvent.target);
-//   };
-
-//   const _onError = event => {
-//     console.log('loading failed', event.nativeEvent);
-//   };
-
-//   return (
-//     <ViroARSceneNavigator
-//       autofocus={true}
-//       initialScene={{
-//         scene: HelloWorldSceneAR,
-//       }}
-//       style={styles.f1}
-//     />
-//   );
-// };
-
-// var styles = StyleSheet.create({
-//   f1: {flex: 1},
-//   helloWorldTextStyle: {
-//     fontFamily: 'Arial',
-//     fontSize: 30,
-//     color: '#ffffff',
-//     textAlignVertical: 'center',
-//     textAlign: 'center',
-//   },
-// });

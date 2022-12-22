@@ -8,9 +8,10 @@ import {
     TextInput,
     StyleSheet,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Entypo from 'react-native-vector-icons/Entypo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { serverUrl } from '../../components/database/Database';
 
 const COLOURS = {
     white: '#ffffff',
@@ -28,14 +29,10 @@ const COLOURS = {
 const Signup = ({ navigation }) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [number, setNumber] = useState('');
+    const [mobileNumber, setNumber] = useState('');
     const [isInvalid, setIsInvalid] = useState(false);
     const [msgText, setMsgText] = useState('');
     const [pass, setPass] = useState('');
-
-
-
-
 
     const validateUser = async (name, email, password) => {
         try {
@@ -46,10 +43,11 @@ const Signup = ({ navigation }) => {
                     name,
                     email,
                     password,
+                    mobileNumber
                 }),
             };
             const re = await fetch(
-                'http://192.168.0.101:4000/api/v1/register',
+                serverUrl + 'register',
                 data
             );
             if (re.status != 201) {
@@ -63,7 +61,11 @@ const Signup = ({ navigation }) => {
                 const user = await re.json();
                 // Do something with user
                 // use it for profile or save it in localstorage
-                AsyncStorage.setItem('user', JSON.stringify(user));
+                try {
+                    await AsyncStorage.setItem('user', JSON.stringify(user));
+                } catch (error) {
+                    console.log(error)
+                }
                 navigation.navigate('Home');
             }
         } catch (error) {
@@ -109,6 +111,7 @@ const Signup = ({ navigation }) => {
                         onChangeText={(email) => setEmail(email)}
                     />
                 </View>
+
                 {/* set name */}
                 <View style={styles.inputWrapper}>
                     <Entypo
@@ -123,6 +126,25 @@ const Signup = ({ navigation }) => {
                         placeholderTextColor='#fff'
                         style={styles.inputText}
                         onChangeText={(name) => setName(name)}
+                    />
+                </View>
+                {/* set name */}
+                <View style={styles.inputWrapper}>
+                    <Entypo
+                        size={16}
+                        name='mobile'
+                        style={{
+                            color: COLOURS.white,
+                            padding: 10,
+                        }}></Entypo>
+                    <TextInput
+                        placeholder='Mobile Number'
+                        placeholderTextColor='#fff'
+                        style={styles.inputText}
+                        keyboardType='numeric'
+                        onChangeText={(no) => {
+                            setNumber(no);
+                        }}
                     />
                 </View>
 
@@ -200,9 +222,8 @@ const styles = StyleSheet.create({
     },
     scrollStyle: {
         height: '100%',
-        paddingTop: 150,
+        paddingTop: 50,
         paddingHorizontal: 25,
-        // backgroundColor: COLOURS.black,
         backgroundColor: '#112',
     },
     gap: {
@@ -262,7 +283,7 @@ const styles = StyleSheet.create({
     },
     textBoxSignup_small: {
         paddingTop: 20,
-        paddingStart: 75,
+        paddingStart: 50,
         color: COLOURS.backgroundMedium,
         fontSize: 16,
     },

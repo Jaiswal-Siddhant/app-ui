@@ -156,6 +156,5 @@ export const Items = [
   },
 ];
 
+exports.serverUrl = 'http://192.168.41.34:4000/api/v1/';
 
-
-exports.serverUrl = 'http://192.168.0.101:4000/api/v1/';
