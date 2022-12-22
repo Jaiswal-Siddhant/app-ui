@@ -10,8 +10,8 @@ import {
 } from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import React, { useEffect, useState } from 'react';
-import AsyncStorage, { useAsyncStorage } from '@react-native-async-storage/async-storage';
-import { serverUrl } from '../../components/database/Database'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { serverUrl } from '../../components/database/Database';
 
 const COLOURS = {
     white: '#ffffff',
@@ -25,20 +25,7 @@ const COLOURS = {
     yellow: '#FFD700'
 };
 
-const isLoggedIn = async () => {
-    try {
-        const user = await useAsyncStorage.getItem('user');
-        if (user != null) return true;
-
-    } catch (error) {
-        console.log(error);
-    }
-    return false;
-}
-
 const Login = ({ navigation }) => {
-
-
     const [email, setEmail] = useState('');
     const [pass, setPass] = useState('');
     const [isInvalid, setIsInvalid] = useState(false);
@@ -64,9 +51,13 @@ const Login = ({ navigation }) => {
                 const user = await re.json();
                 // 		// Do something with user
                 // 		// use it for profile or save it in localstorage
+                try {
 
-                await AsyncStorage.setItem('user', JSON.stringify(user));
-                console.log(await AsyncStorage.getItem('user'));
+                    await AsyncStorage.setItem('user', JSON.stringify(user));
+                    console.log(await AsyncStorage.getItem('user'));
+                } catch (error) {
+
+                }
                 navigation.navigate('Home');
             }
         } catch (error) {
@@ -205,7 +196,6 @@ const styles = StyleSheet.create({
         paddingTop: 200,
         paddingHorizontal: 25,
         backgroundColor: '#112',
-        // backgroundColor: COLOURS.black,
     },
     gap: {
         paddingStart: 20,
@@ -254,8 +244,9 @@ const styles = StyleSheet.create({
     // },
     textBoxSignup_small: {
         paddingTop: 20,
-        paddingStart: 65,
-        color: COLOURS.backgroundMedium, fontSize: 16,
+        paddingStart: 45,
+        color: COLOURS.backgroundMedium,
+        fontSize: 16,
     },
     textBoxSignup_wrapper: {
         flex: 1,
