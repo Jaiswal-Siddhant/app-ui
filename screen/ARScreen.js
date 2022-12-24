@@ -12,7 +12,6 @@ import {
   ViroMaterials,
   ViroAnimations,
 } from '@viro-community/react-viro';
-const path = require('path');
 import { serverUrl } from '../components/database/Database';
 
 

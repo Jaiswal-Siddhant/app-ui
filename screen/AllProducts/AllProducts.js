@@ -1,58 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StatusBar,
-  ScrollView,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
-import { COLOURS, Items, serverUrl } from '../database/Database';
-import Entypo from 'react-native-vector-icons/Entypo';
+import React, { useEffect, useState } from 'react';
+import { Image, ScrollView, StatusBar, Text, TouchableOpacity, View } from 'react-native';
+import { COLOURS, serverUrl } from '../../components/database/Database';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Home = ({ navigation }) => {
-  const [productCount, setProductCount] = useState(0);
-  const [fetchedProducts, setFetchedProducts] = useState([]);
+const fetchProducts = async () => {
+  let data = await fetch(serverUrl + 'allproducts');
+  let data2 = await data.json();
+  return data2;
+}
 
-  const LogOut = async () => {
-    try {
-      await AsyncStorage.setItem('user', '');
-    } catch (error) {
-      console.log(error);
-    }
-  }
+const AllProducts = ({ navigation }) => {
+  const [products, setProducts] = useState([]);
+  const [productCount, setProductsCount] = useState(0);
 
+  useEffect(async () => {
+    const data = await fetchProducts();
+    setProducts(data.products);
+    setProductsCount(data.productsCount);
+  }, []);
 
-  //get called on screen loads
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      getDataFromDB();
-    });
-
-    return unsubscribe;
-  }, [navigation]);
-
-  //get data from DB
-
-  const getDataFromDB = async () => {
-    try {
-      const dataFromDB = await fetch(serverUrl + 'products?page=1');
-      // const dataFromDB1 = await JSON.parse(dataFromDB._bodyBlob._data.__collector);
-      const data = await dataFromDB.json();
-      setFetchedProducts(data.products)
-      setProductCount(data.products.length)
-
-    } catch (error) {
-      console.log(error);
-    }
-
-
-  };
-
-  //create an product reusable card
   const ProductCard = ({ data }) => {
     return (
       <TouchableOpacity
@@ -188,12 +156,10 @@ const Home = ({ navigation }) => {
           }}>
           <TouchableOpacity
             onPress={() => {
-              LogOut()
-              navigation.navigate('Login')
-            }}
-          >
+              navigation.navigate('Home')
+            }}>
             <Entypo
-              name="log-out"
+              name="chevron-left"
               style={{
                 fontSize: 18,
                 color: COLOURS.backgroundMedium,
@@ -217,33 +183,7 @@ const Home = ({ navigation }) => {
             />
           </TouchableOpacity>
         </View>
-        <View
-          style={{
-            marginBottom: 10,
-            padding: 16,
-          }}>
-          <Text
-            style={{
-              fontSize: 26,
-              color: COLOURS.black,
-              fontWeight: '500',
-              letterSpacing: 1,
-              marginBottom: 10,
-            }}>
-            Furniture Shop &amp; Service
-          </Text>
-          <Text
-            style={{
-              fontSize: 14,
-              color: COLOURS.black,
-              fontWeight: '400',
-              letterSpacing: 1,
-              lineHeight: 24,
-            }}>
-            Furniture shop online.
-            {'\n'}This shop offers both products and services
-          </Text>
-        </View>
+
         <View
           style={{
             padding: 16,
@@ -279,15 +219,6 @@ const Home = ({ navigation }) => {
                 {productCount}
               </Text>
             </View>
-            <Text
-              style={{
-                fontSize: 14,
-                color: COLOURS.blue,
-                fontWeight: '400',
-              }}
-              onPress={() => { navigation.navigate('AllProducts') }}>
-              See All
-            </Text>
           </View>
           <View
             style={{
@@ -295,9 +226,9 @@ const Home = ({ navigation }) => {
               flexWrap: 'wrap',
               justifyContent: 'space-around',
             }}>
-            {fetchedProducts.map((data, i) => {
+            {products.map((data, i) => {
               // console.log(data);
-              return <ProductCard data={data} key={i} />;
+              return <ProductCard data={data} key={i} />
             })}
           </View>
         </View>
@@ -359,7 +290,7 @@ const Home = ({ navigation }) => {
         </View> */}
       </ScrollView>
     </View>
-  );
-};
+  )
+}
 
-export default Home;
+export default AllProducts

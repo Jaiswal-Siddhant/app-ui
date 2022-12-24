@@ -8,37 +8,87 @@ import {
   ToastAndroid,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { COLOURS, serverUrl } from '../database/Database';
+import { COLOURS, API_KEY } from '../database/Database';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import RazorpayCheckout from 'react-native-razorpay';
 
 const MyCart = ({ navigation }) => {
   const [total, setTotal] = useState(0);
+  const [subTotal, setSubTotal] = useState(0);
   const [prod, setProd] = useState([]);
-  const productData = [];
 
-  const getDataFromDB = async () => {
+  const getDataFromDB = async (isInitial = true) => {
     let itemArray = await AsyncStorage.getItem('cartItems');
     itemArray = await JSON.parse(itemArray);
-    if (itemArray) {
+    if (itemArray && !isInitial) {
       setProd(itemArray);
+    } else if (itemArray && isInitial) {
+      // count number of times product occures and set quantity of product 
+      let itemArray = await AsyncStorage.getItem('cartItems');
+      itemArray = await JSON.parse(itemArray);
+      if (itemArray) {
+        // count number of times product occures and set quantity of product 
+        let productIds = [];
+        let nonRepeatingProducts = [];
+        for (let i = 0; i < itemArray.length; i++) {
+          if (!productIds.includes(itemArray[i]._id)) {
+            productIds.push(itemArray[i]._id);
+            itemArray[i].quantity = 1;
+            nonRepeatingProducts.push(itemArray[i]);
+          } else {
+            // find index of product with given id and increment its quantity
+            let index = -1;
+            for (let j = 0; j < i; j++) {
+              if (itemArray[j]._id === itemArray[i]._id) {
+                // console.log('itemArray: ' + j)
+                index = j;
+                break;
+              }
+            }
+            itemArray[index].quantity += 1;
+          }
+        }
+        setProductIds(nonRepeatingProducts);
+        setProd(nonRepeatingProducts);
+      }
+      await getTotal();
     } else {
-      setProd(false)
+      setProd([])
       setTotal(false)
     }
   };
-  //get total price of all items in the cart
 
-  useEffect(() => {
-    getDataFromDB();
-    getTotal();
+  useEffect(async () => {
+    // getDataFromDB();
+    await getDataFromDB();
+    await getTotal();
   }, []);
 
-  const getTotal = () => {
-    let total2 = 0;
-    for (let index = 0; index < prod.length; index++) {
-      total2 = total2 + prod[index].price;
+  const setProductIds = async (array) => {
+    try {
+      await AsyncStorage.setItem('cartItems', JSON.stringify(array));
+    } catch (error) {
+      console.log(error)
     }
-    setTotal(total2);
+  }
+
+  const getTotal = async () => {
+    // get total of products in cart
+    try {
+      let array = await AsyncStorage.getItem('cartItems');
+      array = await JSON.parse(array);
+      let totalHere = 0
+      if (array) {
+        for (let i = 0; i < array.length; i++) {
+          totalHere += parseInt(array[i].price) * parseInt(array[i].quantity);
+          // console.log(array[i], array[i].quantity);
+        }
+        setSubTotal(totalHere / 20);
+        setTotal(totalHere);
+      }
+    } catch (err) {
+      console.log(err)
+    }
   };
 
   //remove data from Cart
@@ -56,7 +106,7 @@ const MyCart = ({ navigation }) => {
       }
       try {
         await AsyncStorage.setItem('cartItems', await JSON.stringify(itemArray));
-        getDataFromDB();
+        getDataFromDB(false);
       } catch (error) {
         console.log(error)
       }
@@ -65,6 +115,28 @@ const MyCart = ({ navigation }) => {
 
   //checkout
   const checkOut = async () => {
+    var options = {
+      description: 'Credits towards consultation',
+      image: 'https://i.postimg.cc/bNPxDNh3/icon-removebg-preview.png',
+      currency: 'INR',
+      key: API_KEY,//'rzp_test_8ZU0Z1yuTL3ANk',
+      amount: (total + subTotal) * 100,
+      name: 'ARON Purchase',
+
+      theme: { color: '#528FF0' }
+    }
+    RazorpayCheckout.open(options).then((data) => {
+      // handle success
+      alert(`Success: ${data.razorpay_payment_id}`);
+      purchaseSuccess();
+    }).catch((error) => {
+      // handle failure
+      console.log(`Error: ${error.code} | ${error.description}`);
+      ToastAndroid.show('Payment Failed', ToastAndroid.SHORT);
+    });
+  };
+
+  const purchaseSuccess = async () => {
     try {
       await AsyncStorage.removeItem('cartItems');
     } catch (error) {
@@ -73,7 +145,26 @@ const MyCart = ({ navigation }) => {
 
     ToastAndroid.show('Items will be Deliverd SOON!', ToastAndroid.SHORT);
     navigation.navigate('Home');
-  };
+  }
+
+  const handleProduct = async (index, event) => {
+    let itemArray = await AsyncStorage.getItem('cartItems');
+    itemArray = await JSON.parse(itemArray);
+    if (event === 'increment') {
+      itemArray[index].quantity = itemArray[index].quantity + 1;
+    } else if (event === 'decrement' && itemArray[index].quantity > 1) {
+      itemArray[index].quantity = itemArray[index].quantity - 1;
+    } else if (event === 'decrement' && itemArray[index].quantity === 1) {
+      itemArray.splice(index, 1);
+    }
+    try {
+      await AsyncStorage.setItem('cartItems', await JSON.stringify(itemArray));
+      getDataFromDB(false);
+      getTotal();
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const renderProducts = (data, index) => {
     return (
@@ -158,7 +249,7 @@ const MyCart = ({ navigation }) => {
                 flexDirection: 'row',
                 alignItems: 'center',
               }}>
-              <View
+              <TouchableOpacity
                 style={{
                   borderRadius: 100,
                   marginRight: 20,
@@ -166,7 +257,11 @@ const MyCart = ({ navigation }) => {
                   borderWidth: 1,
                   borderColor: COLOURS.backgroundMedium,
                   opacity: 0.5,
-                }}>
+                }}
+                onPress={async () => {
+                  await handleProduct(index, 'decrement');
+                }}
+              >
                 <MaterialCommunityIcons
                   name="minus"
                   style={{
@@ -174,9 +269,9 @@ const MyCart = ({ navigation }) => {
                     color: COLOURS.backgroundDark,
                   }}
                 />
-              </View>
-              <Text>1</Text>
-              <View
+              </TouchableOpacity>
+              <Text>{data.quantity}</Text>
+              <TouchableOpacity
                 style={{
                   borderRadius: 100,
                   marginLeft: 20,
@@ -184,7 +279,12 @@ const MyCart = ({ navigation }) => {
                   borderWidth: 1,
                   borderColor: COLOURS.backgroundMedium,
                   opacity: 0.5,
-                }}>
+                }}
+                onPress={async () => {
+                  // increment product count 
+                  await handleProduct(index, 'increment');
+                }}
+              >
                 <MaterialCommunityIcons
                   name="plus"
                   style={{
@@ -192,7 +292,7 @@ const MyCart = ({ navigation }) => {
                     color: COLOURS.backgroundDark,
                   }}
                 />
-              </View>
+              </TouchableOpacity>
             </View>
             <TouchableOpacity onPress={() => removeItemFromCart(data._id)}>
               <MaterialCommunityIcons
@@ -481,7 +581,7 @@ const MyCart = ({ navigation }) => {
                   color: COLOURS.black,
                   opacity: 0.8,
                 }}>
-                &#8377;{total / 20}
+                &#8377;{subTotal}
               </Text>
             </View>
             <View
@@ -506,7 +606,7 @@ const MyCart = ({ navigation }) => {
                   fontWeight: '500',
                   color: COLOURS.black,
                 }}>
-                &#8377;{total + total / 20}
+                &#8377;{total + subTotal}
               </Text>
             </View>
           </View>
@@ -523,7 +623,13 @@ const MyCart = ({ navigation }) => {
           alignItems: 'center',
         }}>
         <TouchableOpacity
-          onPress={() => checkOut()}
+          onPress={() => {
+            if (prod.length > 0) {
+              checkOut()
+            } else {
+              ToastAndroid.show('Add Products to checkout', ToastAndroid.SHORT)
+            }
+          }}
           style={{
             width: '86%',
             height: '90%',
@@ -540,11 +646,11 @@ const MyCart = ({ navigation }) => {
               color: COLOURS.white,
               textTransform: 'uppercase',
             }}>
-            CHECKOUT ( &#8377;{total + total / 20} )
+            CHECKOUT ( ₹{total + subTotal} )
           </Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </View >
   );
 };
 

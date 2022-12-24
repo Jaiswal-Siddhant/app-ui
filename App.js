@@ -8,12 +8,13 @@ import MyCart from './components/screens/MyCart';
 import ProductInfo from './components/screens/ProductInfo';
 import ARScreen from './screen/ARScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import AllProducts from './screen/AllProducts/AllProducts';
 
 const Stack = createNativeStackNavigator();
 
 const isLoggedIn = async () => {
   let usr = await AsyncStorage.getItem('user');
-  return usr.success ? true : false;
+  return usr?.success ? true : false;
 }
 
 const App = () => {
@@ -31,6 +32,7 @@ const App = () => {
           <Stack.Screen name="Signup" component={Signup} /></> : null
         }
         <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="AllProducts" component={AllProducts} />
         <Stack.Screen name="MyCart" component={MyCart} />
         <Stack.Screen name="ProductInfo" component={ProductInfo} />
         <Stack.Screen name="ARScreen" component={ARScreen} />

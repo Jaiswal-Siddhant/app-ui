@@ -11,18 +11,14 @@ import {
   Animated,
   ToastAndroid,
 } from 'react-native';
-import { COLOURS, Items, serverUrl } from '../database/Database';
+import { COLOURS, serverUrl } from '../database/Database';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { ViroUtils } from '@viro-community/react-viro';
-
-
 const ProductInfo = ({ route, navigation }) => {
   const { productID } = route.params;
   const [product, setProduct] = useState({});
-
   const [fetchedProducts, setFetchedProducts] = useState([]);
 
   const width = Dimensions.get('window').width;
@@ -38,26 +34,24 @@ const ProductInfo = ({ route, navigation }) => {
   }, [navigation]);
 
   //get product data by productID
-
   const getDataFromDB = async () => {
     try {
       const dataFromDB = await fetch(serverUrl + 'product/' + productID);
       const data2 = await dataFromDB.json();
-      setFetchedProducts(data2.product)
+      setFetchedProducts(data2.product);
     } catch (error) {
       console.log(error);
     }
   };
 
   //add to cart
-
   const addToCart = async id => {
     let itemArray = await AsyncStorage.getItem('cartItems');
     itemArray = JSON.parse(itemArray);
     if (itemArray) {
       let array = itemArray;
       array.push(id);
-
+      console.log('this array', array)
       try {
         await AsyncStorage.setItem('cartItems', JSON.stringify(array));
         ToastAndroid.show(
@@ -84,7 +78,7 @@ const ProductInfo = ({ route, navigation }) => {
     }
   };
 
-  //product horizontal scroll product card
+  // product horizontal scroll product card
   const renderProduct = ({ item, index }) => {
     return (
       <View
@@ -138,7 +132,7 @@ const ProductInfo = ({ route, navigation }) => {
               paddingTop: 16,
               paddingLeft: 16,
             }}>
-            <TouchableOpacity onPress={() => navigation.goBack('Home')}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
               <Entypo
                 name="chevron-left"
                 style={{
@@ -240,7 +234,8 @@ const ProductInfo = ({ route, navigation }) => {
                 params: { link: product.modelSrc, isAvailable: (fetchedProducts.stock > 0) }
               })
             }}
-          >
+            disabled={fetchedProducts.stock === 0 ? true : false}>
+
             <Text
               style={{
                 fontSize: 24,
@@ -263,7 +258,7 @@ const ProductInfo = ({ route, navigation }) => {
                 paddingTop: 0,
                 maxWidth: '84%',
               }}>
-              Check how this looks in real life
+              {fetchedProducts.stock > 0 ? 'Check how this looks in real life' : 'Not available'}
             </Text>
           </TouchableOpacity>
           <View
@@ -365,7 +360,7 @@ const ProductInfo = ({ route, navigation }) => {
                 color: COLOURS.black,
                 marginBottom: 4,
               }}>
-              &#8377; {fetchedProducts.price}
+              Price: &#8377; {fetchedProducts.price}
             </Text>
             <Text>
               Tax Rate 2%~ &#8377;{fetchedProducts.price / 20} (&#8377;
